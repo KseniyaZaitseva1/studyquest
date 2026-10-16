@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0c14">
+  <meta name="description" content="StudyQuest — приложение, которое превращает учебные задачи в квесты: добавляй задачи, отмечай выполненными и набирай очки.">
+  <title>StudyQuest — учебные задачи в стиле игры</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Декоративное свечение на фоне -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Шапка с названием и очками -->
+  <header class="header">
+    <div class="container header__inner">
+      <div class="logo">🎮 <span>StudyQuest</span></div>
+      <div class="score-chip" id="scoreBox" aria-live="polite" aria-atomic="true">
+        ⭐ <span class="score-chip__value" id="scoreValue">0</span>
+        <span class="score-chip__label">очков</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Приветствие -->
+    <section class="hero">
+      <p class="hero__badge">🚀 Каждая задача — новый квест</p>
+      <h1 class="hero__title">Учись с азартом,<br><span class="gradient-text">побеждай себя</span></h1>
+      <p class="hero__text">Добавляй учебные задачи, отмечай выполненными и набирай очки. Прогресс сохраняется прямо в браузере.</p>
+    </section>
+
+    <!-- Форма добавления задачи -->
+    <section class="panel add-task">
+      <h2 class="panel__title">Новый квест ✍️</h2>
+      <form class="add-task__form" id="taskForm">
+        <input
+          class="add-task__input"
+          id="taskInput"
+          type="text"
+          placeholder="Например: решить 10 задач по алгебре"
+          aria-label="Текст учебной задачи"
+          autocomplete="off"
+          maxlength="120"
+        >
+        <div class="points-picker" role="group" aria-label="Сколько очков за задачу">
+          <span class="points-picker__label">Очки:</span>
+          <button type="button" class="points-picker__option is-active" data-points="10" aria-pressed="true">🌱 10</button>
+          <button type="button" class="points-picker__option" data-points="25" aria-pressed="false">⚡ 25</button>
+          <button type="button" class="points-picker__option" data-points="50" aria-pressed="false">🔥 50</button>
+        </div>
+        <button class="add-task__button" id="addButton" type="submit">➕ Добавить квест</button>
+      </form>
+    </section>
+
+    <!-- Прогресс -->
+    <section class="panel progress">
+      <div class="progress__head">
+        <h2 class="panel__title">📊 Прогресс</h2>
+        <span class="progress__emoji" id="progressEmoji" aria-hidden="true">🌱</span>
+      </div>
+      <div
+        class="progress__bar"
+        role="progressbar"
+        aria-label="Прогресс выполнения квестов"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <div class="progress__fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <p class="progress__caption" id="progressCaption">Добавь первый квест — и погнали! 🏁</p>
+    </section>
+
+    <!-- Статистика -->
+    <section class="stats">
+      <div class="panel stats__item">
+        <span class="stats__icon" aria-hidden="true">📚</span>
+        <span class="stats__number" id="activeCount">0</span>
+        <span class="stats__caption">В процессе</span>
+      </div>
+      <div class="panel stats__item">
+        <span class="stats__icon" aria-hidden="true">✅</span>
+        <span class="stats__number" id="doneCount">0</span>
+        <span class="stats__caption">Выполнено</span>
+      </div>
+    </section>
+
+    <!-- Список задач -->
+    <section class="tasks">
+      <div class="tasks__head">
+        <h2 class="tasks__title">Мои квесты</h2>
+        <span class="tasks__counter" id="tasksCounter">0</span>
+      </div>
+
+      <ul class="tasks__list" id="tasksList">
+        <!-- Задачи добавляются сюда через JavaScript -->
+      </ul>
+
+      <div class="empty" id="emptyMessage">
+        <span class="empty__emoji" aria-hidden="true">🗂️</span>
+        <p class="empty__title">Список пока пуст</p>
+        <p class="empty__text">Добавь первый квест — и погнали! 🏁</p>
+      </div>
+    </section>
+
+    <!-- Герой -->
+    <section class="panel hero-card">
+      <div class="hero-card__top">
+        <div class="hero-card__avatar" id="heroAvatar" aria-hidden="true">🧑‍🎓</div>
+        <div class="hero-card__info">
+          <h2 class="panel__title">🧙 Твой герой</h2>
+          <p class="hero-card__line">
+            Уровень: <strong id="heroLevel">1</strong> · Сила: <strong id="heroPower">10</strong>
+          </p>
+        </div>
+        <button class="btn btn--accent" id="levelUpButton" type="button">Прокачать · 40 ⭐</button>
+      </div>
+      <div class="hero-card__stats">
+        <span>Заработано: <strong id="earnedTotal">0</strong> ⭐</span>
+        <span>Потрачено: <strong id="spentTotal">0</strong> ⭐</span>
+      </div>
+      <div class="hero-card__inventory">
+        <span class="hero-card__inventory-label">Инвентарь</span>
+        <div class="inventory" id="inventoryList"></div>
+      </div>
+    </section>
+
+    <!-- Магазин -->
+    <section class="panel shop">
+      <div class="shop__head">
+        <h2 class="panel__title">🛒 Магазин</h2>
+        <span class="shop__wallet">Доступно: <strong id="shopWallet">0</strong> ⭐</span>
+      </div>
+      <div class="shop__grid" id="shopGrid">
+        <!-- Карточки предметов рисует JavaScript -->
+      </div>
+    </section>
+
+    <!-- Арена -->
+    <section class="panel arena">
+      <div class="arena__head">
+        <h2 class="panel__title">⚔️ Арена</h2>
+        <span class="arena__hint">Сильнее герой и инвентарь — больше побед</span>
+      </div>
+      <p class="arena__result" id="arenaResult" aria-live="polite">Сразись с первым противником — победа откроет следующего и принесёт очки.</p>
+      <ul class="arena__list" id="arenaList">
+        <!-- Противников рисует JavaScript -->
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Подвал -->
+  <footer class="footer">
+    <div class="container">
+      <p>StudyQuest — сделано для тех, кто учится с азартом 🚀</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
